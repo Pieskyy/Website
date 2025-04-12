@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/vue@2"></script>
+    <script src="https://unpkg.com/vue-router@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.6.0/dist/vuetify.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.6.0/dist/vuetify.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <title>Chess For Kids!</title>
+</head>
+<style>
+  /* For mobile phones */ /* recieved from w3schools */
+[class*="col-"] {
+    width: 100%;
+}
+
+/* For desktop */
+.col-1 {width: 8.33%;}
+.col-2 {width: 16.66%;}
+.col-3 {width: 25%;}
+.col-4 {width: 33.33%;}
+.col-5 {width: 41.66%;}
+.col-6 {width: 50%;}
+.col-7 {width: 58.33%;}
+.col-8 {width: 66.66%;}
+.col-9 {width: 75%;}
+.col-10 {width: 83.33%;}
+.col-11 {width: 91.66%;}
+.col-12 {width: 100%;}
+
+
+@media only screen and (max-width: 768px) {
+    [class*="col-"] {
+        width: 100%;
+    }
+}
+
+
+.video-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: move;
+    z-index: 9999;
+    display: inline-block;
+}
+
+.delete-button {
+    position: relative;
+    top: -160px;
+    right: 15px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+
+.center img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.centered-text {
+    text-align: center;
+  }
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.textbox {
+    width: 80%;
+    padding: 20px;
+    margin: 0 auto 20px; 
+}
+
+.centered {
+    position: absolute;
+    top: 20%;
+    left: 35%;
+    transform: translate(-50%, -50%);
+}
+
+</style>
+<body>
+        <div class="video-container" id="videoContainer" style="position: fixed; bottom: 20px; right: 20px;">
+            <video id="myVideo" width="300" height="168.75" controls>
+                <source src="Chess for kids video.mp4" type="video/mp4">
+            </video>
+            <button class="delete-button" id="deleteButton">X</button>
+        </div>
+
+    <script>
+        const videoContainer = document.getElementById('videoContainer');
+        const deleteButton = document.getElementById('deleteButton');
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        videoContainer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - videoContainer.getBoundingClientRect().left;
+            offsetY = e.clientY - videoContainer.getBoundingClientRect().top;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                videoContainer.style.left = `${e.clientX - offsetX}px`;
+                videoContainer.style.top = `${e.clientY - offsetY}px`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        document.addEventListener('selectstart', (e) => {
+            if (isDragging) {
+                e.preventDefault();
+            }
+        });
+
+        deleteButton.addEventListener('click', () => {
+            videoContainer.remove();
+        });
+    </script>
+</body>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<div id="app">
+    <v-app>
+        <v-app-bar app>
+            <v-toolbar-title>Chess for Kids!</v-toolbar-title>
+            <v-spacer><img src="Pawn.png" width="40" height="40"></v-spacer>
+            <v-btn to="/">Home</v-btn>
+            <v-btn to="/about">About</v-btn>
+            <v-btn to="/project">project</v-btn>
+            <v-btn to="/chess">Why Chess?</v-btn>           
+            <v-btn to="/quiz">Quiz</v-btn>
+            <v-btn to="/donate">donate</v-btn>
+            <v-btn to="/contact">Contact</v-btn>
+        </v-app-bar>
+        <v-content>
+            <router-view></router-view>
+        </v-content>
+    </v-app>
+</div>
+ 
+<script>
+    Vue.use(VueRouter);
+    Vue.use(Vuetify);
+//got the textbox part thats below from chatgpt, 3 lines of code that ive just put throughout to centre im referring to  <div class="container"> <div class="textbox" id="Textbox"> </div> </div>//
+    const Home = {
+    template: `
+        <div>
+            <div class="container">
+                <img src="b4.png" width="146" height="475" style = "margin-left: -100px;  position: fixed;">
+                <img src="b5.png" width="146" height="475" style="margin-left: 800px; position: fixed;">
+                <div class="textbox" id="Textbox" style = "margin-top: 0px">
+            <h1>Welcome to The Chess for kids site!</h1>
+            <p>Empowering Young Minds Through Chess</p>
+            </div>
+            </div>
+            <div class="container">
+    <div class="textbox" id="Textbox">
+        <h3>About Us:</h3>
+           <p>Chess is more than just a game; it's a powerful educational tool with numerous benefits for young minds. From improving concentration and problem-solving skills to enhancing memory and boosting self-confidence, chess offers a unique learning experience that transcends the boundaries of the board. </p>
+     </div>
+ <div class="textbox" id="Textbox">
+          <h3>Why Chess? </h3>
+              <p>Chess is more than just a game; it's a powerful educational tool with numerous benefits for young minds. From improving concentration and problem-solving skills to enhancing memory and boosting self-confidence, chess offers a unique learning experience that transcends the boundaries of the board. </p>
+        </div>
+    </div>
+    <div class="center">
+                <img src="cbackground.png" width="576" height="324">
+                </div>
+    <div class="container">
+    <div class="textbox" id="Textbox">
+        <h3>Tournaments and Events: </h3>
+        <p>Engaging tournaments and events offer children the chance to put their skills to the test, connect with peers, and experience the thrill of competition in a supportive environment.</p>
+    </div>
+    <div class="textbox" id="Textbox">
+        <h3>Educational Resources:</h3>
+        <p>Access to a wealth of educational resources, including tutorials and online lessons, to supplement learning and inspire a lifelong love of chess.</p>
+        <v-btn to="/project">Our current running projects</v-btn></p>
+    </div>
+</div>
+<div class="container">
+    <div class="textbox" id="Textbox">
+       <h3> Join the Chess Community Today:</h3>
+<p>Ready to embark on an exciting journey of learning, growth, and fun? Join the Chess for Kids community today and discover the transformative power of chess!</p>
+</div>
+</div>
+<div class="container">
+    <div class="textbox" id="Textbox">
+        <H3> Quiz </h3>
+            <p>Do you want to test your chess knowledge? then click take quiz below!<p>
+   <button @click="redirectToQuiz"><h3>Take Quiz!!!</h3></button>
+   <img src="confused.jpg" width="576" height="324">
+   <div class="container"
+   </div>
+</div>
+    <div class="textbox" id="Textbox">
+        <p>Do you want to help with  our cause and give children a helping  hand to education in thier life? Then please  <v-btn to="/donate">donate</v-btn></p>
+        </div>
+        </div>
+        </div>
+            <v-row>
+                <v-col cols="12" sm="10" md="4" lg="2" v-for="student in students" :key="student.id">
+                    <v-card>
+                        <v-img :src="student.image" height="200px"></v-img>
+                        <v-card-title>{{ student.name }}</v-card-title>
+                        <v-card-subtitle>{{ student.role }}</v-card-subtitle>
+                        <v-card-text>{{ student.bio }}</v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
+            <p>Do you want to help with  our cause and give children a helping  hand to education in thier life? Then please  <v-btn to="/donate">donate</v-btn></p>
+        </div>
+    `/*This is card from the esports site which i used to talk about the quiz*/, 
+    data() {
+    return {
+        students: [
+            { id: 1, name: 'Quiz!', role: '', bio: 'Test your knowledge and attempt a chess quiz!', image: 'confused.jpg' }
+        ]
+    }
+},
+    methods: {
+        redirectToQuiz() {
+            this.$router.push('/quiz');
+        }
+    }
+};
+    const About = {
+        template: `
+            <div>
+                <div class="container">
+                    <img src="b3.png" width="146" height="475" style = "margin-left: -100px;  position: fixed;">
+                <img src="b7.png" width="146" height="475" style="margin-left: 800px; position: fixed;">
+    <div class="textbox" id="Textbox" style = "margin-top: 0px">
+                <h1>About Us</h1>
+                    <p>Welcome to Chess for Kids, where we believe in the transformative power of chess to shape young minds and equip children with invaluable skills for success in life. Founded in 2024, Chess for Kids has been dedicated to making the game of chess accessible to children from all backgrounds, igniting their passion for learning and personal development.</p>
+               </div>
+               </div>
+               <div class="container">
+    <div class="textbox" id="Textbox">
+                    <h2>Our History</h2>
+                    <p>Chess for Kids was born out of a shared vision among a group of passionate chess enthusiasts and educators who recognized the profound impact that chess could have on children's intellectual, emotional, and social development. With a commitment to equity and inclusivity, our organization embarked on a journey to bring the benefits of chess education to underserved communities, starting with Australia.</p>
+                    <p>Since our humble beginnings, we have grown steadily, expanding our reach and enhancing our programs to serve an ever-growing number of children and families. Through strategic partnerships, dedicated volunteers, and the unwavering support of our donors, Chess for Kids has evolved into a leading force in youth chess education, enriching the lives of thousands of children across Sydney.</p>
+                    <img src="old chess.jpg" width="430" height="500" class="center">
+
+              </div>
+              </div>
+              <div class="container">
+    <div class="textbox" id="Textbox">
+                    <h2>Our Mission</h2>
+                    <p>At Chess for Kids, our mission is simple yet profound, to empower children to learn, grow, and succeed through the game of chess. We are driven by the following core objectives:</p>
+                    <img src="poor kids.jpg" width="294" height="194" class="center">
+                    <div class="container">
+    <div class="textbox" id="Textbox">
+                    <h4>Foster Critical Thinking Skills:</h4>
+                    <p> Chess is more than just a game; it's a powerful tool for developing critical thinking, strategic planning, and analytical reasoning skills. Through our programs, we aim to cultivate these essential cognitive abilities in children, laying a solid foundation for their academic and personal success.</p>
+                    </div>
+                    </div>
+                    <div class="container">
+    <div class="textbox" id="Textbox">
+                    <h4>Promote Intellectual Growth:</h4>
+                    <p> By engaging with the complexities of chess, children sharpen their problem-solving skills, enhance their decision-making abilities, and hone their pattern recognition capabilities. These intellectual benefits extend far beyond the chessboard, empowering children to excel in various academic pursuits and navigate life's challenges with confidence and resilience.</p>
+                    </div>
+                    </div>
+                    <div class="container">
+    <div class="textbox" id="Textbox">                  
+                    <h4>Cultivate Character and Sportsmanship:</h4>
+                    <p>Chess teaches valuable life lessons such as patience, perseverance, and good sportsmanship. Through wins and losses, children learn to handle success and failure with grace, developing the resilience and integrity needed to thrive in an ever-changing world.</p>
+                   </div>
+                   </div>
+                   <div class="container">
+    <div class="textbox" id="Textbox">
+                    <h4>Bridge Divides and Foster Inclusivity:</h4>
+                    <p>Chess has a unique ability to bring people together, transcending barriers of age, gender, ethnicity, and socioeconomic status. At Chess for Kids, we are committed to creating an inclusive and welcoming environment where every child feels valued, supported, and empowered to reach their full potential.</p>
+                    </div>
+                    </div>
+                </div>
+                   </div>
+                    <div class="container">
+    <div class="textbox" id="Textbox">               
+                    <h2>Our Impact</h2>
+                    <p>Over the year, Chess for Kids has made a tangible and lasting impact on the lives of countless children and families. Through our comprehensive chess programs, experienced instructors, and vibrant community engagement initiatives, we have witnessed remarkable transformations in the following areas:</p>
+                    <img src="hfc.jpg" width="450" height="300" class="center">
+                    <div class="container">
+    <div class="textbox" id="Textbox">
+                    <h4>Academic Achievement:</h4>
+                    <p>Many of our students have demonstrated significant improvements in academic performance, with enhanced critical thinking skills translating into higher grades and standardized test scores.</p>
+                  </div>
+                  </div>
+                  <div class="container">
+    <div class="textbox" id="Textbox">
+                    <h4>Personal Development:</h4>
+                    <p>Beyond academic success, children enrolled in our programs develop important life skills such as resilience, discipline, and self-confidence, laying the groundwork for a lifetime of achievement and fulfillment.</p>
+                   </div>
+                   </div>
+                   <div class="container">
+    <div class="textbox" id="Textbox">
+                    <h3>Community Building:</h3> 
+                    <p>Chess for Kids is more than just a chess program; it's a thriving community of learners, parents, educators, and volunteers united by a shared passion for chess and a commitment to nurturing the next generation of chess enthusiasts. Through tournaments, events, and outreach initiatives, we foster meaningful connections and enrich the social fabric of our communities.</p>
+                    <p>As we look to the future, we remain steadfast in our commitment to empowering young minds, breaking down barriers to access, and creating opportunities for children to thrive through the game of chess. Join us on this exciting journey as we continue to inspire, educate, and empower the leaders of tomorrow.'s goals, history, and impact</p>
+             </div>
+             </div>
+             </div>
+            </div>
+            </div>
+            </div>
+        `
+    };
+
+    const WhyChess = {
+    template: `
+        <div>
+            <div class="container">
+                <img src="b10.png" width="146" height="475" style = "margin-left: -100px;  position: fixed;">
+                <img src="b11.png" width="146" height="475" style="margin-left: 800px; position: fixed;">
+    <div class="textbox" id="Textbox" style = "margin-top: -200x">
+            <h1>Why Chess?</h1>
+             <p>Chess is more than just a game. It's an incredible tool for childhood development, offering numerous benefits that extend far beyond the chessboard. At Chess for Kids, we believe in the transformative power of chess education and its ability to empower young minds. Here's why:</p>
+             <p>1. Cognitive Development: Chess is like a mental workout for kids. It challenges them to think critically, solve problems, and strategize several moves ahead. By navigating complex positions and making decisions under pressure, children sharpen their analytical skills and enhance their cognitive abilities.</p>
+             </DIV>
+             </DIV>
+             <div class="container">
+    <div class="textbox" id="Textbox">
+            <p>2. Patience and Concentration: In a world filled with distractions, chess teaches kids the importance of patience and concentration. Each move requires careful thought and consideration, fostering focus and discipline. As children immerse themselves in the game, they learn to channel their attention effectively—a skill that benefits them both on and off the chessboard.</p>
+            <p>3. Confidence Building: Success in chess is deeply rewarding, boosting children's self-esteem and confidence. As they tackle challenging opponents and overcome obstacles, they develop a sense of accomplishment and resilience. Whether it's mastering a new strategy or winning a hard-fought game, every achievement in chess serves as a stepping stone towards greater confidence.</p>
+            <p>4. Sportsmanship and Respect: Chess promotes sportsmanship and respect for others. Players learn to win with grace and lose with dignity, understanding that every game is an opportunity for growth. Through friendly competition and mutual respect, children build meaningful connections with their peers, fostering a sense of camaraderie and community.</p>
+            <p>5. Academic Excellence: Studies have shown that chess can enhance academic performance. The skills acquired through chess—such as critical thinking, memory retention, and problem-solving—translate seamlessly into the classroom. Many educators integrate chess into their curriculum to stimulate intellectual development and improve academic outcomes.</p>
+            <p>6. Lifelong Learning: Chess is a lifelong journey of learning and discovery. Whether children aspire to become grandmasters or simply enjoy playing for fun, chess offers endless opportunities for growth and exploration. It's a timeless pursuit that fosters a love of learning and a passion for intellectual challenge.</p></p>
+            <p>At "Chess for Kids," we're committed to harnessing the power of chess to enrich the lives of children everywhere. Through our programs, resources, and community initiatives, we aim to inspire the next generation of chess enthusiasts and empower them to reach their full potential. Join us on this extraordinary journey, and let's discover the magic of chess together!</p>
+        </div>
+        </div> 
+        <div class="container">
+    <div class="textbox" id="Textbox">    
+        <h1>How chess affects children. </h1>
+                <div style="flex: 1;">
+                <img src="kidschess.jpg" width="540" height="360">
+                </div>
+            <p>Chess is a powerful tool for nurturing cognitive abilities in children. The game requires players to think critically, analyze situations, and strategize several moves in advance. By engaging in chess, children exercise their problem-solving skills, enhance their memory retention, and develop logical reasoning abilities. These cognitive skills are not only crucial for success in chess but also transferable to academic pursuits and real-life situations.</p>
+           <p>n our modern, fast-paced society, nurturing concentration and patience in children is essential. Chess requires players to maintain unwavering focus as they carefully consider each move and anticipate their opponent's strategies. Through consistent practice, children develop the ability to concentrate for extended periods, fostering patience along the way. These qualities are not only vital for success in chess but also contribute significantly to academic achievement and personal development.</p>
+           <p>Chess is not merely a battle of intellect; it also provides valuable lessons in emotional intelligence. Winning and losing are inherent aspects of the game, teaching children how to manage success graciously and cope with defeat gracefully. Moreover, playing chess encourages empathy and perspective-taking, as children must anticipate their opponent's moves and understand their motivations. These emotional skills foster resilience, empathy, and sportsmanship, shaping children into well-rounded individuals capable of navigating life's challenges with resilience and grace.</p>
+            <p>Chess is a social game that promotes healthy competition and camaraderie among players. Whether in casual matches or organized tournaments, children have the opportunity to interact with peers, exchange ideas, and forge friendships based on mutual respect and shared interests. Furthermore, chess instills values of sportsmanship and fair play, teaching children to respect their opponents, follow rules, and accept outcomes with dignity. These social interactions contribute to the development of interpersonal skills and enhance children's ability to collaborate and communicate effectively in diverse settings.</p>
+            <p>Numerous studies have demonstrated a positive correlation between chess and academic performance. Engaging in chess stimulates brain development and enhances cognitive functions, leading to improvements in academic subjects such as mathematics, science, and reading comprehension. The analytical thinking, problem-solving, and concentration skills honed through chess transcend the game and translate into academic success. Moreover, chess fosters a love for learning and intellectual curiosity, motivating children to explore new ideas and pursue academic excellence.</P>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <div style="flex: 1;">
+                    </div>
+                    </div>
+                    </div>
+                    <div class="container">
+    <div class="textbox" id="Textbox">  
+                    <H1>How chess is played!</h1>
+                    <p>Chess is played on an 8x8 board; There are 64 squares, and not every square is equal</p>
+                    <div style="flex: 1;">
+                    <img src="Set Board.png" width="571" height="570.75">
+                </div>
+                    <p>Each square has a specific name, the files are by letter (a,b,c,d,e,f,g,h) and the ranks are by number (1,2,3,4,5,6,7,8); The bottom right for both players in the starting postition is a black square, a1 for white and h8 for black. 
+                    <p>The piece order when setting up is the rooks on the a and h files (a1 aand h1 for white, a8 and h8 for black), the b and g file for knights, c and f for bishops and the queen goes on the d and the king goes on the e</p>
+                    <p>There are diffrent phases of chess, these include the opening, middlegame and endgame.</p>
+                    <p>Each of these phases are equally as important and must require dedication to the game to master, typically the opening coversd the first 10-15 moves but can sometimes last less or more, the middle game is more or less the deciding factor of the game, if you wwin the middle game you should in the endgame, the endgames usually begins after alot of pieces have been traded off from the middle game.</p>
+                    <p>Chess is a game of deep strategy, requiring players to think several moves ahead, anticipate their opponent's moves, and make tactical decisions. It involves elements such as controlling the center of the board, developing pieces, creating pawn structures, and coordinating attacks. The game has a vast number of possible positions and variations, making it endlessly fascinating for players of all skill levels.</p>
+                     <p>Chess is often played competitively in tournaments, but it's also enjoyed casually by millions of people around the world. It's known for its ability to enhance cognitive skills such as problem-solving, critical thinking, concentration, and pattern recognition, making it a popular educational tool as well.</p>
+                    </div>
+                </div>
+                </div>
+                <div class="container">
+    <div class="textbox" id="Textbox"> 
+        <h1> How the Pieces move!</h1>
+                <div style="flex: 1;">
+                <img src="king.png" width="50" height="50">
+                    <p>The King is the most important Chess piece, if he falls the game is over, he can move 1 square in any direction unless castling.</p>
+                 <img src="pawn.png" width="50" height="50">
+                    <p>Each player has 8 pawns along the 2nd rank and they can move 1 space unless on thier first move where they can move 2. A pawn is wworth 1 point of material</p>
+                    <img src="Knight.jpg" width="50" height="50">
+                    <p>The Knight moves like an L, he goes 3 squares either up, down, left or right and then 1 to the side, the knight can be very tricky as it is the only piece that can jump over other pieces. A knight is worth 3 material</P>
+                <img src="Bishop.png" width="50" height="50">
+                <p>The bishop moves along the diagonals and each player has 2 bishops, one on the light squares and one on the dark squares. Though bishops and knights are worth the same, bishops are technically better, espiecally in open games or endgames. they are worth 3 points of material. </p>
+                <img src="Rook.jpg" width="50" height="50">
+                <p>Besides the Queen, the rook is the strongest piece, it controls the file and ranks, it sees straight paths to any direction with possible (besides diagonals) and is worth 5 points of material. </p>
+                <img src="Queen.jpg" width="50" height="50">
+                <p>The Queen is the most valuable piece, on a completely open board it can control up to 27 squares!!! It is worth 9 points of material. </p>
+               </div>
+               </div>
+            </div>
+            <div class="container">
+    <div class="textbox" id="Textbox">  
+            <h1>Chess Openings</h1>
+            <p>In chess there are hundreds of openings and vartions of these openings. an opening is a very good way to get yourself into chess, its one of the easier aspects of chess to learn and understand, due to this it could assist young children in the abilty to retain memorys whilst doing something fun!</p>
+            <p>Some Great openings (for white) can include the Italian, The Ruy Lopez, and Queens Gambit!</p>
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <div class="container">
+    <div class="textbox" id="Textbox">  
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <img src="italian.png" width="189.5" height="188.75">
+                <div style="margin-left: 20px;">
+                    <h3>Italian Game!</h3>
+                    <p>The Italian Game is very popular and one of the oldest openings in chess. White develops the bishop to a good square where it controls the center and targets f7. This opening is very easy to study and one of the best choices for beginners.</p> 
+                    <p>1. e4 e5 2. Nf3 Nc6 3. Bc4...</p>
+                </div>
+                </div>
+                </div>
+                </div>
+            </div>
+            <div class="container">
+    <div class="textbox" id="Textbox">  
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <img src="ruy_lopez.png" width="189.5" height="188.75">
+                <div style="margin-left: 20px;">
+                    <h3>Ruy Lopez!</h3>
+                    <p>The Ruy Lopez is one of the most popular openings in chess, named after a 16th-century Spanish priest.
+                        <p>1. e4 e5 2. Nf3 Nc6 3. Bb5...</p>
+                </div>
+                </div>
+                </div>
+            </div>
+            <div class="container">
+    <div class="textbox" id="Textbox">  
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <img src="queens_gambit.png" width="189.5" height="188.75">
+                <div style="margin-left: 20px;">
+                    <h3>Queen's Gambit!</h3>
+                    <p>The Queen's Gambit is a classic opening, Theres a tv show called the "The Queens Gambit" about this opening and along side the Ruy Lopez, is commonly played by masters!!</p>
+                        <p>1. d4 d5 2. c4...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+                </div>
+            </div>
+            <div class="container">
+    <div class="textbox" id="Textbox"> 
+            <h2>Openings for black!</h2>
+<p>Those were just openings for White, Chess is a 2 way game and some openings for black that are popular and great are the Kings Indian, The Sicilian and the Caro-Kann.</p>
+<div class="container">    
+<div class="textbox" id="Textbox"> 
+<div style="display: flex; align-items: center; margin-bottom: 20px;">
+    <img src="Kings_Indian.png" width="189.5" height="188.75">
+    <div style="margin-left: 20px;">
+        <h3>Kings Indian!</h3>
+        <p>The King's Indian Defense is a hypermodern chess opening for black characterized by a fianchettoed king's bishop, delayed central pawn breaks, dynamic piece play, and aggressive kingside pawn storms.</p> 
+        <p>1. d4 Nf6 2. c4 d6 3. Nc3 g6 4. Nf3 Bg7 5. g3 O-O 6. Bg2 a6 7. O-O</p>
+    </div>
+</div>
+</div>
+</div>
+<div class="container">
+    <div class="textbox" id="Textbox"> 
+<div style="display: flex; align-items: center; margin-bottom: 20px;">
+    <img src="Sicilian.png" width="189.5" height="188.75">
+    <div style="margin-left: 20px;">
+        <h3>Sicilian!</h3>
+        <p>The Sicilian has the most variations out of any other opening! The Sicilian begins with a flank pawn rather than the usual pawn for the center!</p>
+        <p>1. e4 c5</p>
+    </div>
+</div>
+</div>
+</div>
+<div class="container">
+    <div class="textbox" id="Textbox"> 
+<div style="display: flex; align-items: center; margin-bottom: 20px;">
+    <img src="Caro.png" width="189.5" height="188.75">
+    <div style="margin-left: 20px;">
+        <h3>Caro-Kann!</h3>
+        <p>The Caro-Kann is similar to the Sicilian where it starts with the c pawn; however, in the Caro-Kann, you only move it 1 square forward, then push the center with d5!</p>
+        <p>1. e4 c6 2. d4 d5</p>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="container">
+    <div class="textbox" id="Textbox"> 
+<h1>Middle Games!</h1>
+<p>Mastering the middle game in chess is often considered the ultimate test of a player's skill and strategic understanding. While openings provide a structured beginning to a game, the middle game is where creativity, calculation, and tactical prowess truly shine. It's in this phase that players must navigate a complex web of possibilities, anticipating their opponent's moves while formulating their own plans.</p>
+<p>One of the most challenging aspects of the middle game is the constant need to balance offense and defense. Every move must be calculated with precision, as the slightest mistake can lead to disastrous consequences. Tactical ideas abound, from simple forks and pins to more complex combinations involving sacrifices and threats.</p>
+<p>Moreover, the middle game is where the battle for control of the board intensifies. Players jockey for position, striving to gain control of key squares and lines while restricting their opponent's options. It's a delicate dance of maneuvering and calculation, where one wrong move can tip the balance of power irreversibly.</p>
+<p>Perhaps most importantly, the middle game sets the stage for the endgame. Every pawn trade, every piece exchange, carries significant weight, as they can have far-reaching implications for the final stage of the game. A seemingly innocuous decision, such as trading pawns on the a-file, can have profound effects on the eventual outcome. A pawn structure weakened in the middle game may lead to vulnerabilities in the endgame, potentially allowing an opponent to exploit positional weaknesses or even secure a decisive advantage.</p>
+</div>
+</div>
+<div class="container">
+    <div class="textbox" id="Textbox"> 
+<h1>Endgames</h1>
+
+             <P>Endgames are not as complex as the middlegame, but equally as important!</P>
+             <p>There are many diffrent mating types which include ones likes Backrank mate, Anastasia mate, Arabian Mate, etc.</p>
+             <p>If you know alot of mating types you would mate people quicker but its ok if you dont! as long as if  you know a few simple mates you should be fine!</p>
+             <p>Some people are very fierce and hard to beat in the endgames, e.g. Magnus Carlsen, and so if you know what to do in endgames and your opponent doesnt it should be an easy win!</p>
+            <P>Theres diffrent type of pawn structures and positions that could be a game changer! for example, with just kings and 1 pawn, if the pawn is on the A or H file its a draw, and if its on any other ones its a win for whomever owns the pawn!</p>
+                <h1>Where you can play chess online</h1>
+<p>you can play chess on many sites online but not all are free and some are better than others, the two best and what we recommend will be linked below:</p>
+<a href="https://www.chess.com/home" style = "font-size: 2em;">Chess.com</a>
+<a href="https://lichess.org" style = "font-size: 2em;">Lichess.org</a>
+</div>
+</div>
+`
+};
+
+const donate = { //sir helped me with this//
+    template: `
+        <div>
+            <div class="container">
+  <img src="poorkids.jpg" alt="Snow" style="width:100%;">>
+  <div class="centered"> <h1 style="color:white;">Donate</h1>
+            <p style="color:white;">thank you for coming to our donate page</p>
+            <P style="color:white;">If you intend to donate please click one of the following buttons!</p>
+                <br>
+                <v-btn @click="checkDonate">$5</v-btn>
+                <v-btn @click="checkDonate">$10</v-btn>
+                <v-btn @click="checkDonate">$50</v-btn>
+                <v-btn @click="checkDonate">$100</v-btn>
+                <v-btn @click="checkOther">Other</v-btn>
+               </div>
+                </div>
+</div>
+                `,
+              
+
+                methods: {
+      
+                    checkDonate() {
+    alert(`Thank you for donating!`);
+},
+checkOther() {
+    const customAmount = prompt("Please enter the amount:");
+    console.log(customAmount);
+    const parsedAmount = parseFloat(customAmount);
+    
+    if (parsedAmount >= 0) {
+        this.checkDonate(parsedAmount);
+        alert(`Thank you for donating!`);
+    } else {
+        alert('Please enter a valid amount next time :(');
+            }   
+        }
+    }
+ };
+
+const Quiz = {
+    template: `
+        <div>
+            <h1>Quiz</h1>
+            <div id="app">
+                <v-app>
+                    <v-container>
+                        <v-card v-for="(question, index) in questions" :key="index">
+                            <v-card-title>{{ question.text }}</v-card-title>
+                            <v-card-text>
+                                <v-radio-group v-model="answers[index]" column>
+                                    <v-radio v-for="(option, i) in question.options" :key="i" :label="option.text" :value="option.text"></v-radio>
+                                </v-radio-group>
+                            </v-card-text>
+                        </v-card>
+                        <v-btn @click="checkAnswers">Submit</v-btn>
+                    </v-container>
+                </v-app>
+            </div>
+        </div>
+    `,
+    data() {
+        return {
+            questions: [
+                {
+                    text: "1. Which of these are the hardest to master?",
+                    options: [
+                        { text: 'Opening', correct: false },
+                        { text: 'Middlegame', correct: true },
+                        { text: 'Endgame', correct: false },
+                    ],
+                },
+                {
+                    text: "2. Which of these are an opening for white?",
+                    options: [
+                        { text: 'Ruy Lopez', correct: true },
+                        { text: 'The Borg', correct: false },
+                        { text: 'The French', correct: false },
+                    ],
+                },
+                {
+                    text: "3. how many squares can a pawn move?",
+                    options: [
+                        { text: '2', correct: false },
+                        { text: '1', correct: false },
+                        { text: 'Both', correct: true },
+                    ],
+                },
+                {
+                    text: "4. Who is one of the strongest endgame players??",
+                    options: [
+                        { text: 'Hikaru Nakamura', correct: false },
+                        { text: 'Ian Nepomniachtchi', correct: false },
+                        { text: 'Magnus Carlsen', correct: true },
+                    ],
+                },
+            {
+                text: "5. What file do the kings start on?",
+                    options: [
+                        { text: 'e', correct: true },
+                        { text: 'd', correct: false },
+                    ],
+                },
+                {
+                text: "6. Which of these is the Italian?",
+                    options: [
+                        { text: '1. e4 e5 2. Nf3 Nc6 3. Bb5...', correct: false },
+                        { text: '1. e4 e5 2. Nf3 Nc6 3. Bc4...', correct: true },
+                    ],
+                }, 
+                {
+                text: "7. Which positions are a draw?",
+                    options: [
+                        { text: 'pawn on h4 (white pawn)', correct: true },
+                        { text: 'pawn on g4 (white pawn)', correct: false },
+                    ],
+                }, 
+                {
+                text: "8. Which piece ISNT worth 3 points of material?",
+                    options: [
+                        { text: 'Knight', correct: false },
+                        { text: 'Rook', correct: true },
+                        { text: "Bishop", correct: false}
+                    ],
+                }, 
+                
+            ],
+            answers: [],
+        };
+    },
+    methods: {
+        checkAnswers() {
+            let score = 0;
+            this.questions.forEach((question, index) => {
+                if (question.options.find(o => o.text === this.answers[index] && o.correct)) {
+                    score++;
+                }
+            });
+            alert(`Your score: ${score}`);
+        },
+        checkDonate() {
+            console.log('test')
+            alert(`Your donated`);
+        },
+    }
+}
+
+const Contact = {
+    template: `
+        <div>
+            <h1>Contact</h1>
+            <p>Hey! if you have any Inquiries our contact information are stated below:</p>
+            <p>Email: 26wilkiea@student.pac.nsw.edu.au</p>
+            <p>Phone: 1800 Chess</p>
+            <p>Address: 338-356 Wentworth Rd, Orchard Hills NSW 2748 </p>
+            <p> If you have any questions please contact us :)</P>
+            <br>
+            <br>
+            <h3>Where we are located<h3>
+                <div id="app">
+    <div id="map" style = "height: 400px;">
+        </div>
+        </div>
+        </div>
+    `,
+    mounted() {
+        this.initMap();
+        this.addMarkers();
+    },
+    data: {
+            map: null,
+            titleLayer: null,
+            layers: [],
+    },
+    methods: {
+        initMap() {
+            this.map = L.map('map').setView([-33.795517, 150.706685], 3);
+            this.titleLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18
+            });
+            this.titleLayer.addTo(this.map);
+        },
+        addMarkers() {
+     
+            const Location = L.marker([-33.795517, 150.706685]).addTo(this.map)
+                .bindPopup('Where we are located in Sydney');
+            this.layers.push(Location);
+        }
+    }
+};
+
+const Project = {
+template: `
+<div>
+    <div class="container">
+        <div class="centered-text">
+        <img src="b6.png" width="146" height="475" style = "margin-left: -100px;  position: fixed;">
+                <img src="b9.png" width="146" height="475" style="margin-left: 800px; position: fixed;">
+    <div class="textbox" id="Textbox" style = "margin-top: -200x">
+        <h1> Current Projects </h1>
+<p> At Chess for Kids we feel our programs will help children develope the skills required to be exceptional at chess. </p>
+                <h4> Chess Coaching!</h4>
+ <a href="project1.html"><img src="coaching.jpeg" width="300" height="214"></a>
+ <h4> Tournaments and events!</h4>
+ <a href="project2.html"><img src="Tournament.jpeg" width="300" height="214"></a>
+ <h4>Books for Kids!</h4>
+ <a href="project3.html"><img src="Book1.jpg" width="300" height="450"></a>
+</div>
+</div>
+`
+};
+
+
+    const routes = [
+    { path: '/', component: Home },
+    { path: '/chess', component: WhyChess },
+    { path: '/about', component: About },
+    { path: '/project', component: Project },
+    { path: '/quiz', component: Quiz },
+    { path: '/donate', component: donate },
+    { path: '/contact', component: Contact }
+];
+
+    const router = new VueRouter({
+        routes
+    });
+
+    new Vue({
+        router,
+        vuetify: new Vuetify(),
+    }).$mount('#app');
+</script>
+</body>
+</html>
